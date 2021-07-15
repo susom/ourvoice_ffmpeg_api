@@ -1,2 +1,72 @@
 # Ourvoice ffmpeg API
+
 ### Api intended for mp3 conversion from .wav and .amr filetypes
+This cloud function will generate a signed URL upon use.
+The returned function can then be invoked to store files in their corresponding location in the ourvoice storage bucket.
+
+Example POST parameters:
+```
+Headers: {
+    application/x-www-form-urlencoded
+}
+```
+```
+Body: {
+    fileName:apple.wav
+    walkHash:6C5A44C4-4A0F-47D1-852B-0981E6628ABE
+    projectAbv:JOR
+    bucketName:ov_walk_files
+}
+```
+The response will look similar to this:
+
+```
+https://storage.googleapis.com/ov_walk_files/JOR/6C5A44C4-4A0F-47D1-852B-0981E6628ABE/1626305726210/apple.wav?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=...
+```
+You can then send a PUT request to the response url like so:
+```
+curl -X PUT -H 'Content-Type: audio/x-wav' --upload-file apple.wav {SIGNED_URL}}
+```
+
+## Deployment
+The following command can be run to deploy to cloud functions:
+
+-  `gcloud functions deploy generateUploadUrl --entry-point app --runtime nodejs14 --trigger-http --env-vars-file .env.yaml`
+
+The `.env.yaml` file will need to be present in the root folder and contains the projectId key/value pair.
+
+## Local development
+
+The following launch.json file can be used for VSCode development
+
+```
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/index.js"
+            
+        },
+        {
+            "name": "Launch via NPM",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "start",
+                "--",
+                "--inspect-brk=9229"
+            ],
+            "port": 9229
+        }
+    ]
+}
+```

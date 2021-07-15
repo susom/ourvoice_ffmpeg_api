@@ -1,0 +1,28 @@
+{
+  "name": "ourvoice_ffmpeg_api",
+  "version": "1.0.0",
+  "description": "audio conversion from wav and amr to mp3 for ourvoice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx functions-framework --debug-brk --target=app [--signature-type=http]"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/susom/ourvoice_ffmpeg_api.git"
+  },
+  "author": "Jordan Schultz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/susom/ourvoice_ffmpeg_api/issues"
+  },
+  "homepage": "https://github.com/susom/ourvoice_ffmpeg_api#readme",
+  "dependencies": {
+    "@google-cloud/storage": "^5.8.5",
+    "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^1.8.0"
+  }
+}

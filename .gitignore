@@ -1,1 +1,8 @@
 *workspace
+node_modules    
+*.wav 
+*.mp3
+som-rit-ourvoice-cloud-storage-key.json
+.vscode
+*old*
+.env*

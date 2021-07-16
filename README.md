@@ -29,11 +29,16 @@ curl -X PUT -H 'Content-Type: audio/x-wav' --upload-file apple.wav {SIGNED_URL}}
 ```
 
 ## Deployment
-The following command can be run to deploy to cloud functions:
+The following commands can be run to deploy both cloud functions:
 
--  `gcloud functions deploy generateUploadUrl --entry-point app --runtime nodejs14 --trigger-http --env-vars-file .env.yaml`
+1.  `gcloud functions deploy generateUploadUrl --entry-point app --runtime nodejs14 --trigger-http --env-vars-file .env.yaml`
 
-The `.env.yaml` file will need to be present in the root folder and contains the projectId key/value pair.
+
+
+2. `gcloud functions deploy ffmpeg_mp3_trigger --runtime nodejs14 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --env-vars-file .env.yaml`
+
+Both `.env.yaml` files will need to be present in their corresponding deployment folders.
+Root folder for generateUpload and ffmpeg_mp3_trigger for the gcloud storage activation trigger
 
 ## Local development
 

@@ -26,7 +26,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
  * @param {Object} context - event context, type, and id
  */
 
-exports.testTrigger = async (file, context) => {
+exports.ffmpegTrigger = async (file, context) => {
     if (file.name.includes('.wav') || file.name.includes('.amr')) { // Only audio files uploaded via mobile
         console.log(`  Event: ${context.eventId}`);
         console.log(`  Event Type: ${context.eventType}`);

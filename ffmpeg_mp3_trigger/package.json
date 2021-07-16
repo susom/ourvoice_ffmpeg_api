@@ -1,0 +1,16 @@
+{
+  "name": "ffmpeg_mp3_converter",
+  "version": "1.0.0",
+  "description": "Trigger function for .wav files intended to convert to mp3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordan Schultz",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@google-cloud/storage": "^5.8.5",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}

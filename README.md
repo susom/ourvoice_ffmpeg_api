@@ -1,7 +1,11 @@
 # Ourvoice ffmpeg API
 
 ### Api intended for mp3 conversion from .wav and .amr filetypes
-This cloud function will generate a signed URL upon use.
+### This repository contains the definitions of two cloud functions
+
+## generateUploadUrl
+
+- Function that will generate a signed URL upon use.
 The returned function can then be invoked to store files in their corresponding location in the ourvoice storage bucket.
 
 Example POST parameters:
@@ -28,6 +32,12 @@ You can then send a PUT request to the response url like so:
 curl -X PUT -H 'Content-Type: audio/x-wav' --upload-file apple.wav {SIGNED_URL}}
 ```
 
+
+
+## ffmpegTrigger
+- Function called on cloud storage upload trigger of either .wav or .amr filetypes
+- Converts audio format to .mp3 and stores in cloud storage
+
 ## Deployment
 The following commands can be run to deploy both cloud functions:
 
@@ -35,7 +45,7 @@ The following commands can be run to deploy both cloud functions:
 
 
 
-2. `gcloud functions deploy ffmpeg_mp3_trigger --runtime nodejs14 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --env-vars-file .env.yaml`
+2. `gcloud functions deploy ffmpegTrigger --runtime nodejs14 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --env-vars-file .env.yaml`
 
 Both `.env.yaml` files will need to be present in their corresponding deployment folders.
 Root folder for generateUpload and ffmpeg_mp3_trigger for the gcloud storage activation trigger

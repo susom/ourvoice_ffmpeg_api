@@ -41,18 +41,33 @@ exports.ffmpegTrigger = async (file, context) => {
 
         await storage.bucket('ov_walk_files').file(file.name) //Save locally to VM temp dir
             .download({ destination: tempFilePath })
-            .then(console.log(`Finished download to temp filepath :  ${tempFilePath}`))
+            .then(()=> console.log(`Finished download to temp filepath :  ${tempFilePath}`))
 
         await processAudio(tempFilePath, tempMp3); //Convert audio to mp3
 
         const options = {
-            destination: `${output_name}`,
-            resumable: true,
+            destination: `${output_name}`
         };
 
-        storage.bucket('ov_walk_files').upload(`${tempMp3}`, options)
-            .then(console.log(`finished upload of ${tempFilePath}.mp3 to ${output_name}`))
-            .catch(err => console.log(`error in storage download callback `, err))
+        await storage.bucket('ov_walk_files').upload(`${tempMp3}`, options)
+            .then((res) => {
+                console.log(`finished upload of ${tempFilePath}.mp3 to ${output_name}`);
+                fs.unlinkSync(tempMp3);
+                fs.unlinkSync(tempFilePath);
+                return null;
+            })
+            .catch(err => {
+                console.log(`error in storage download callback `, err);
+                fs.unlinkSync(tempMp3);
+                fs.unlinkSync(tempFilePath);
+                return null;
+            })
+
+        // Once the image has been converted delete the local files to free up disk space.
+        
+
+    } else { // This file is not an audio file we want to convert
+        return null;
     }
 };
 
@@ -74,7 +89,6 @@ function processAudio(tempFilePath, tempOutputPath) {
             .on('end', function () {
                 console.log(`Processing finished, Mp3 created at ${tempFilePath} !`);
                 return resolve()
-
             })
 
     })

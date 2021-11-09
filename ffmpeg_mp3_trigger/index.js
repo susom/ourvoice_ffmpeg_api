@@ -15,7 +15,6 @@ if (fs.existsSync(keyFilename))
 else
     storage = new Storage({ projectId });
 
-
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 /**
@@ -28,22 +27,30 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 exports.ffmpegTrigger = async (file, context) => {
     if (file.name.includes('.wav') || file.name.includes('.amr')) { // Only audio files uploaded via mobile
-        console.log(`  Event: ${context.eventId}`);
-        console.log(`  Event Type: ${context.eventType}`);
-        console.log(`  Bucket: ${file.bucket}`);
-        console.log(`  File: ${file.name}`);
-        console.log(`  Created: ${file.timeCreated}`);
-        console.log(`  Updated: ${file.updated}`);
+        console.log(`Starting conversion for file: ${file.name} in bucket ${file.bucket}`)
+        
+        var output_name, tempFilePath, tempMp3;
+        
+        if(file.name.includes('.wav')){
+            output_name = file.name.replace('.wav', '.mp3');
+            tempFilePath = path.join(os.tmpdir(), 'temp.wav'); //Grab local VM temp dir as wav
+            tempMp3 = tempFilePath.replace('.wav', '.mp3'); 
+        } else {
+            output_name = file.name.replace('.amr', '.mp3');
+            tempFilePath = path.join(os.tmpdir(), 'temp.amr'); //Grab local VM temp dir as amr
+            tempMp3 = tempFilePath.replace('.amr', '.mp3'); 
+        }
 
-        const output_name = file.name.replace('.wav', '.mp3');
-        const tempFilePath = path.join(os.tmpdir(), 'temp.wav'); //Grab local VM temp dir
-        const tempMp3 = tempFilePath.replace('.wav', '.mp3');
-
-        await storage.bucket('ov_walk_files').file(file.name) //Save locally to VM temp dir
+        await storage.bucket('ov_walk_files').file(file.name) //Save current file locally to VM temp dir
             .download({ destination: tempFilePath })
-            .then(()=> console.log(`Finished download to temp filepath :  ${tempFilePath}`))
+            .then(()=> console.log(`Finished download of ${file.name} to temp filepath in local VM :  ${tempFilePath}`))
+            .catch((err) => {
+                console.log(`Error saving ${file.name} to temp`)
+                console.log(err)
+                return null;
+            })
 
-        await processAudio(tempFilePath, tempMp3); //Convert audio to mp3
+        await processAudio(tempFilePath, tempMp3); //Convert audio to temp.mp3 via ffmpeg
 
         const options = {
             destination: `${output_name}`
@@ -51,7 +58,7 @@ exports.ffmpegTrigger = async (file, context) => {
 
         await storage.bucket('ov_walk_files').upload(`${tempMp3}`, options)
             .then((res) => {
-                console.log(`finished upload of ${tempFilePath}.mp3 to ${output_name}`);
+                console.log(`finished upload of ${tempFilePath} to ${output_name}`);
                 fs.unlinkSync(tempMp3);
                 fs.unlinkSync(tempFilePath);
                 return null;
@@ -87,7 +94,7 @@ function processAudio(tempFilePath, tempOutputPath) {
                 return reject(new Error(err))
             })
             .on('end', function () {
-                console.log(`Processing finished, Mp3 created at ${tempFilePath} !`);
+                console.log(`Processing finished, Mp3 created at ${tempOutputPath} !`);
                 return resolve()
             })
 

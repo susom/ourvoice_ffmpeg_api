@@ -45,7 +45,7 @@ The following commands can be run to deploy both cloud functions:
 
 
 
-2. `gcloud functions deploy ffmpegTrigger --runtime nodejs14 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --max-instances 20 --timeout 120s --env-vars-file .env.yaml`
+2. `gcloud functions deploy ffmpegTrigger --runtime nodejs18 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --max-instances 20 --timeout 120s --memory 256M --env-vars-file .env.yaml --docker-registry=artifact-registry`
 
 Both `.env.yaml` files will need to be present in their corresponding deployment folders.
 Root folder for generateUpload and ffmpeg_mp3_trigger for the gcloud storage activation trigger

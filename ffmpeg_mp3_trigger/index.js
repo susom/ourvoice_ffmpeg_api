@@ -29,15 +29,16 @@ exports.ffmpegTrigger = async (file, context) => {
     if (file.name.includes('.wav') || file.name.includes('.amr')) { // Only audio files uploaded via mobile
         console.log(`Starting conversion for file: ${file.name} in bucket ${file.bucket}`)
         
-        var output_name, tempFilePath, tempMp3;
+        let output_name, tempFilePath, tempMp3;
+        let timestamp = Date.now();
         
         if(file.name.includes('.wav')){
             output_name = file.name.replace('.wav', '.mp3');
-            tempFilePath = path.join(os.tmpdir(), 'temp.wav'); //Grab local VM temp dir as wav
-            tempMp3 = tempFilePath.replace('.wav', '.mp3'); 
+            tempFilePath = path.join(os.tmpdir(), `temp_${timestamp}.wav`); //Grab local VM temp dir as wav
+            tempMp3 = tempFilePath.replace('.wav', '.mp3');
         } else {
             output_name = file.name.replace('.amr', '.mp3');
-            tempFilePath = path.join(os.tmpdir(), 'temp.amr'); //Grab local VM temp dir as amr
+            tempFilePath = path.join(os.tmpdir(), `temp_${timestamp}.amr`); //Grab local VM temp dir as amr
             tempMp3 = tempFilePath.replace('.amr', '.mp3'); 
         }
 

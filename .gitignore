@@ -6,3 +6,4 @@ som-rit-ourvoice-cloud-storage-key.json
 .vscode
 *old*
 .env*
+.idea/

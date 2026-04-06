@@ -7,3 +7,4 @@ som-rit-ourvoice-cloud-storage-key.json
 *old*
 .env*
 .idea/
+.DS_Store

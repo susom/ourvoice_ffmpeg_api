@@ -26,9 +26,11 @@
     "@google-cloud/functions-framework": "^3.4.0"
   },
   "overrides": {
-    "teeny-request": "10.1.2"
+    "teeny-request": "10.1.2",
+    "uuid": "^14.0.0"
   },
   "resolutions": {
-    "teeny-request": "10.1.2"
+    "teeny-request": "10.1.2",
+    "uuid": "^14.0.0"
   }
 }

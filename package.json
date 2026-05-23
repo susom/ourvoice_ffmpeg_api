@@ -19,7 +19,7 @@
   "homepage": "https://github.com/susom/ourvoice_ffmpeg_api#readme",
   "dependencies": {
     "@google-cloud/storage": "^7.19.0",
-    "express": "^4.22.1",
+    "express": "^4.22.2",
     "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {

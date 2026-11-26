@@ -38,17 +38,73 @@ curl -X PUT -H 'Content-Type: audio/x-wav' --upload-file apple.wav {SIGNED_URL}}
 - Function called on cloud storage upload trigger of either .wav or .amr filetypes
 - Converts audio format to .mp3 and stores in cloud storage
 
+## ffmpegTrigger-2
+- Same conversion logic as ffmpegTrigger, deployed as a separate Cloud Function
+- Source: `ffmpeg_mp3_trigger/`
+- Runtime: Node.js 22
+- Trigger: `google.storage.object.finalize` on bucket `transform_ov_walk_files`
+- Destination bucket: `ov_walk_files`
+
 ## Deployment
-The following commands can be run to deploy both cloud functions:
 
-1.  `gcloud functions deploy generateUploadUrl --entry-point app --runtime nodejs14 --trigger-http --env-vars-file .env.yaml`
+### generateUploadUrl
 
+```
+gcloud functions deploy generateUploadUrl --entry-point app --runtime nodejs14 --trigger-http --env-vars-file .env.yaml
+```
 
+### ffmpegTrigger (legacy)
 
-2. `gcloud functions deploy ffmpegTrigger --runtime nodejs18 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --max-instances 20 --timeout 120s --memory 256M --env-vars-file .env.yaml --docker-registry=artifact-registry`
+```
+gcloud functions deploy ffmpegTrigger --runtime nodejs18 --trigger-resource ov_walk_files --trigger-event google.storage.object.finalize --max-instances 20 --timeout 120s --memory 256M --env-vars-file .env.yaml --docker-registry=artifact-registry
+```
 
-Both `.env.yaml` files will need to be present in their corresponding deployment folders.
-Root folder for generateUpload and ffmpeg_mp3_trigger for the gcloud storage activation trigger
+### ffmpegTrigger-2 (run from `ffmpeg_mp3_trigger/`)
+
+Requires `.env.yaml` in `ffmpeg_mp3_trigger/` with `projectId` and `finalBucketName` (not committed to git).
+
+```
+gcloud functions deploy ffmpegTrigger-2 \
+  --project som-rit-ourvoice \
+  --region us-central1 \
+  --runtime nodejs22 \
+  --entry-point ffmpegTrigger \
+  --trigger-resource transform_ov_walk_files \
+  --trigger-event google.storage.object.finalize \
+  --memory 1024MB \
+  --timeout 240s \
+  --max-instances 20 \
+  --env-vars-file .env.yaml \
+  --docker-registry artifact-registry
+```
+
+### Rollback ffmpegTrigger-2
+
+Check out the last known-good tag and redeploy with the previous runtime:
+
+```
+git checkout live-ffmpegTrigger-2-2025-07 -- ffmpeg_mp3_trigger/
+```
+
+Then run from `ffmpeg_mp3_trigger/`:
+
+```
+gcloud functions deploy ffmpegTrigger-2 \
+  --project som-rit-ourvoice \
+  --region us-central1 \
+  --runtime nodejs20 \
+  --entry-point ffmpegTrigger \
+  --trigger-resource transform_ov_walk_files \
+  --trigger-event google.storage.object.finalize \
+  --memory 1024MB \
+  --timeout 240s \
+  --max-instances 20 \
+  --env-vars-file .env.yaml \
+  --docker-registry artifact-registry
+```
+
+All `.env.yaml` files must be present in their corresponding deployment folders.
+Root folder for generateUploadUrl and `ffmpeg_mp3_trigger/` for ffmpegTrigger-2
 
 ## Local development
 

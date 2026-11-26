@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Trigger function for .wav files intended to convert to mp3",
   "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,8 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@google-cloud/storage": "^7.19.0",
-    "fluent-ffmpeg": "^2.1.2"
+    "@google-cloud/storage": "^7.22.0",
+    "fluent-ffmpeg": "^2.1.3"
   },
   "overrides": {
     "teeny-request": "10.1.2",
